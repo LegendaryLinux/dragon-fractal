@@ -27,7 +27,8 @@ let drawDragonCurve = () => {
     canvasElement.width = 1280;
     canvasElement.height = 720;
     let canvasContext = canvasElement.getContext('2d');
-    canvasContext.strokeStyle = 'teal'; //'rgb(177,182,1)';
+    let colors = ['white','lightblue','teal','gold','green','red'];
+    canvasContext.strokeStyle = colors[Math.floor(Math.random()*colors.length)];
     let canvas = new ArtBoard(canvasContext);
 
     let targetSteps = 5000;
@@ -43,7 +44,7 @@ let drawDragonCurve = () => {
             currentVector = isLeftTurn(i) ? rotateVectorLeft(currentVector) : rotateVectorRight(currentVector);
             canvas.moveCursor(currentVector[0],currentVector[1]);
             if(i === targetSteps){drawDragonCurve();}
-        }, i*100); // One second between loops
+        }, i*45); // One second between loops
     }
 };
 

@@ -36,7 +36,15 @@ isLeftTurn = (turnNumber) => {
     return (((turnNumber & -turnNumber) << 1) & turnNumber) !== 0;
 };
 
-let drawDragonCurve = (canvasElement, forceRedraw = false, useGradient = true) => {
+/**
+ * Draw a dragon curve on a canvas of size 720p or greater
+ * @param canvasElement HTML canvas element
+ * @param useGradient If true, the draw line will be a gradient color. If false, a solid color
+ * @param forceRedraw If true, the canvas image will be traced over with a black line between renders
+ * @param redrawState boolean control variable used by forceRedraw. Setting this to true while forceRedraw is true will
+ *  trigger the black line override render
+ */
+let drawDragonCurve = (canvasElement, useGradient = true, forceRedraw = true, redrawState = false) => {
     let canvasContext = canvasElement.getContext('2d');
 
     // Determine colors for the line
@@ -44,9 +52,10 @@ let drawDragonCurve = (canvasElement, forceRedraw = false, useGradient = true) =
     let gradientColors = ['lightblue','teal','gold','green','red','lightcyan'];
 
     // Flip a coin to decide if we use gradient colors or a solid line
-    if(!useGradient){
+    if(!useGradient || (forceRedraw && redrawState)){
         // Solid color line
-        canvasContext.strokeStyle = colors[Math.floor(Math.random()*colors.length)];
+        canvasContext.strokeStyle = (forceRedraw && redrawState) ?
+            'black' : colors[Math.floor(Math.random()*colors.length)];
     }else{
         // Gradient color
         let shuffledColors = arrayShuffle(gradientColors);
@@ -63,7 +72,8 @@ let drawDragonCurve = (canvasElement, forceRedraw = false, useGradient = true) =
     // How many steps (lines) we want to draw
     let targetSteps = 5000;
 
-    if(forceRedraw){
+    // Prevent graphical glitch causing the last two steps to remain after being forceRedrawn
+    if(forceRedraw && !redrawState){
         canvasContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
     }
 
@@ -76,7 +86,7 @@ let drawDragonCurve = (canvasElement, forceRedraw = false, useGradient = true) =
         setTimeout(() => {
             currentVector = isLeftTurn(i) ? rotateVectorLeft(currentVector) : rotateVectorRight(currentVector);
             canvas.moveCursor(currentVector[0],currentVector[1]);
-            if(i === targetSteps){drawDragonCurve(canvasElement, forceRedraw, useGradient);}
-        }, i*40); // One second between loops
+            if(i === targetSteps){drawDragonCurve(canvasElement, useGradient, forceRedraw, !redrawState);}
+        }, i*1); // One second between loops
     }
 };

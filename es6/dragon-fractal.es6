@@ -87,6 +87,6 @@ let drawDragonCurve = (canvasElement, useGradient = true, forceRedraw = true, re
             currentVector = isLeftTurn(i) ? rotateVectorLeft(currentVector) : rotateVectorRight(currentVector);
             canvas.moveCursor(currentVector[0],currentVector[1]);
             if(i === targetSteps){drawDragonCurve(canvasElement, useGradient, forceRedraw, !redrawState);}
-        }, i*1); // One second between loops
+        }, i*40); // One second between loops
     }
 };

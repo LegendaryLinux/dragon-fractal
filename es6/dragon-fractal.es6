@@ -8,6 +8,20 @@ let rotateVectorLeft = (vector) => {
     return [vector[1]*-1, vector[0]];
 };
 
+let arrayShuffle = (array) => {
+    // Fisher-Yates Shuffle (https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
+    let itemCount = array.length;
+    while(itemCount > 0){
+        let index = Math.floor(Math.random()*itemCount);
+        --itemCount;
+
+        let temp = array[itemCount];
+        array[itemCount] = array[index];
+        array[index] = temp;
+    }
+    return array;
+};
+
 isLeftTurn = (turnNumber) => {
     /** From Wikipedia:
      * There is a simple one line non-recursive method of implementing the above k mod 4 method of finding the turn
@@ -23,20 +37,39 @@ isLeftTurn = (turnNumber) => {
 };
 
 let drawDragonCurve = () => {
+    // Setup canvas element and context
     let canvasElement = document.getElementById('dragon-canvas');
     canvasElement.width = 1280;
     canvasElement.height = 720;
     let canvasContext = canvasElement.getContext('2d');
-    let colors = ['white','lightblue','teal','gold','green','red'];
-    canvasContext.strokeStyle = colors[Math.floor(Math.random()*colors.length)];
+
+    // Determine colors for the line
+    let colors = ['white','lightblue','teal','gold','green','red','lightcyan'];
+    let gradientColors = ['lightblue','teal','gold','green','red','lightcyan'];
+
+    // Flip a coin to decide if we use gradient colors or a solid line
+    if(Math.floor(Math.random()*2) === 0){
+        // Solid color line
+        canvasContext.strokeStyle = colors[Math.floor(Math.random()*colors.length)];
+    }else{
+        // Gradient color
+        let shuffledColors = arrayShuffle(gradientColors);
+        let linearGradient = canvasContext.createLinearGradient(1280,720,0,0);
+        for(let i = 0; i < shuffledColors.length; ++i){
+            linearGradient.addColorStop((i / (shuffledColors.length -1)),shuffledColors[i]);
+        }
+        canvasContext.strokeStyle = linearGradient;
+    }
+
+    // Use the class I wrote to make life easier
     let canvas = new ArtBoard(canvasContext);
 
+    // How many steps (lines) we want to draw
     let targetSteps = 5000;
 
     // Setup canvas and determine step size
-    canvasContext.clearRect(0,0,canvasElement.width,canvasElement.height);
     let currentVector = [10,0];
-    canvas.setCursor(1050,500);
+    canvas.setCursor(1050,460);
     canvas.moveCursor(currentVector[0],currentVector[1]);
 
     for(let i = 1; i <= targetSteps; i++){
@@ -44,7 +77,7 @@ let drawDragonCurve = () => {
             currentVector = isLeftTurn(i) ? rotateVectorLeft(currentVector) : rotateVectorRight(currentVector);
             canvas.moveCursor(currentVector[0],currentVector[1]);
             if(i === targetSteps){drawDragonCurve();}
-        }, i*45); // One second between loops
+        }, i*40); // One second between loops
     }
 };
 

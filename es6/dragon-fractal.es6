@@ -36,11 +36,7 @@ isLeftTurn = (turnNumber) => {
     return (((turnNumber & -turnNumber) << 1) & turnNumber) !== 0;
 };
 
-let drawDragonCurve = () => {
-    // Setup canvas element and context
-    let canvasElement = document.getElementById('dragon-canvas');
-    canvasElement.width = 1280;
-    canvasElement.height = 720;
+let drawDragonCurve = (canvasElement, forceRedraw = false, useGradient = true) => {
     let canvasContext = canvasElement.getContext('2d');
 
     // Determine colors for the line
@@ -48,7 +44,7 @@ let drawDragonCurve = () => {
     let gradientColors = ['lightblue','teal','gold','green','red','lightcyan'];
 
     // Flip a coin to decide if we use gradient colors or a solid line
-    if(Math.floor(Math.random()*2) === 0){
+    if(!useGradient){
         // Solid color line
         canvasContext.strokeStyle = colors[Math.floor(Math.random()*colors.length)];
     }else{
@@ -67,6 +63,10 @@ let drawDragonCurve = () => {
     // How many steps (lines) we want to draw
     let targetSteps = 5000;
 
+    if(forceRedraw){
+        canvasContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    }
+
     // Setup canvas and determine step size
     let currentVector = [10,0];
     canvas.setCursor(1050,460);
@@ -76,11 +76,7 @@ let drawDragonCurve = () => {
         setTimeout(() => {
             currentVector = isLeftTurn(i) ? rotateVectorLeft(currentVector) : rotateVectorRight(currentVector);
             canvas.moveCursor(currentVector[0],currentVector[1]);
-            if(i === targetSteps){drawDragonCurve();}
+            if(i === targetSteps){drawDragonCurve(canvasElement, forceRedraw, useGradient);}
         }, i*40); // One second between loops
     }
-};
-
-window.onload = () => {
-    drawDragonCurve();
 };

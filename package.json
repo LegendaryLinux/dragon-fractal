@@ -3,6 +3,6 @@
     "http-server": "^13.0.1"
   },
   "scripts": {
-    "host": "http-server -p 80"
+    "host": "http-server public -p 80"
   }
 }

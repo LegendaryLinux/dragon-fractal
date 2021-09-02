@@ -1,14 +1,14 @@
-let rotateVectorRight = (vector) => {
+const rotateVectorRight = (vector) => {
     // x2=y1, y2=-x1
     return [vector[1], (vector[0]*-1)];
 };
 
-let rotateVectorLeft = (vector) => {
+const rotateVectorLeft = (vector) => {
     // x2=-y1, y2=x1
     return [vector[1]*-1, vector[0]];
 };
 
-let arrayShuffle = (array) => {
+const arrayShuffle = (array) => {
     // Fisher-Yates Shuffle (https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
     let itemCount = array.length;
     while(itemCount > 0){
@@ -22,7 +22,7 @@ let arrayShuffle = (array) => {
     return array;
 };
 
-isLeftTurn = (turnNumber) => {
+const isLeftTurn = (turnNumber) => {
     /** From Wikipedia:
      * There is a simple one line non-recursive method of implementing the above k mod 4 method of finding the turn
      * direction in code. Treating turn n as a binary number, calculate the following boolean value:
@@ -44,12 +44,12 @@ isLeftTurn = (turnNumber) => {
  * @param redrawState boolean control variable used by forceRedraw. Setting this to true while forceRedraw is true will
  *  trigger the black line override render
  */
-let drawDragonCurve = (canvasElement, useGradient = true, forceRedraw = true, redrawState = false) => {
-    let canvasContext = canvasElement.getContext('2d');
+const drawDragonCurve = (canvasElement, useGradient = true, forceRedraw = true, redrawState = false) => {
+    const canvasContext = canvasElement.getContext('2d');
 
     // Determine colors for the line
-    let colors = ['white','lightblue','teal','gold','green','red','lightcyan'];
-    let gradientColors = ['lightblue','teal','gold','green','red','lightcyan'];
+    const colors = ['white','lightblue','teal','gold','green','red','lightcyan'];
+    const gradientColors = ['lightblue','teal','gold','green','red','lightcyan'];
 
     // Flip a coin to decide if we use gradient colors or a solid line
     if(!useGradient || (forceRedraw && redrawState)){
@@ -58,8 +58,8 @@ let drawDragonCurve = (canvasElement, useGradient = true, forceRedraw = true, re
             'black' : colors[Math.floor(Math.random()*colors.length)];
     }else{
         // Gradient color
-        let shuffledColors = arrayShuffle(gradientColors);
-        let linearGradient = canvasContext.createLinearGradient(1280,720,0,0);
+        const shuffledColors = arrayShuffle(gradientColors);
+        const linearGradient = canvasContext.createLinearGradient(1280,720,0,0);
         for(let i = 0; i < shuffledColors.length; ++i){
             linearGradient.addColorStop((i / (shuffledColors.length -1)),shuffledColors[i]);
         }
@@ -67,10 +67,10 @@ let drawDragonCurve = (canvasElement, useGradient = true, forceRedraw = true, re
     }
 
     // Use the class I wrote to make life easier
-    let canvas = new ArtBoard(canvasContext);
+    const canvas = new ArtBoard(canvasContext);
 
     // How many steps (lines) we want to draw
-    let targetSteps = 5000;
+    const targetSteps = 5000;
 
     // Prevent graphical glitch causing the last two steps to remain after being forceRedrawn
     if(forceRedraw && !redrawState){
@@ -79,7 +79,7 @@ let drawDragonCurve = (canvasElement, useGradient = true, forceRedraw = true, re
 
     // Setup canvas and determine step size
     let currentVector = [10,0];
-    canvas.setCursor(1050,460);
+    canvas.setCursor(canvasElement.width * 0.6, canvasElement.height * 0.6);
     canvas.moveCursor(currentVector[0],currentVector[1]);
 
     for(let i = 1; i <= targetSteps; i++){
